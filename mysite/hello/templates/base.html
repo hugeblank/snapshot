@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'assets/foundation.min.css' %}">
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+
+    <body>
+        <h1>{% block header %}{% endblock %}</h1>
+        <script src="{% static 'assets/vendor.js' %}"></script>
+        <script src="{% static 'assets/foundation.min.js' %}"></script>
+    </body>
+</html>
