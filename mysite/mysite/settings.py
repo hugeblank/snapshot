@@ -100,6 +100,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Login Redirectors
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "/registration/login/"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -124,3 +128,8 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Media Root for uploaded files
+
+MEDIA_ROOT = "/media/"
+MEDIA_URL = '/media/'

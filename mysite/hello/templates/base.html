@@ -6,12 +6,29 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'assets/foundation.min.css' %}">
-        <title>{% block title %}{% endblock %}</title>
+        <title>{{title}}</title>
     </head>
 
     <body>
-        <h1>{% block header %}{% endblock %}</h1>
+        <div class="top-bar">
+            <ul class="menu align-left">
+                <li class="menu-text"><a href="/">Snapshot</a></li>
+            </ul>
+            <ul class="menu align-right">
+                {% if request.user.is_authenticated %}
+                    <li class="menu-text"><a href="/post/">Post</a></li>
+                    <li class="menu-text"><a href="/logout/">Logout</a></li>
+                {% else %}
+                    <li class="menu-text"><a href="/register/">Sign Up</a></li>
+                    <li class="menu-text"><a href="/login/">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% block content %}
+        {% endblock %}
         <script src="{% static 'assets/vendor.js' %}"></script>
-        <script src="{% static 'assets/foundation.min.js' %}"></script>
+        <script src="{% static 'assets/app.min.js' %}"></script>
+        {% block scripts %}
+        {% endblock %}
     </body>
 </html>

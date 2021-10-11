@@ -1,3 +1,23 @@
 {% extends "base.html" %}
 {% block title %}{{title}}{% endblock %}
-{% block header %}{{header}}{% endblock %}
+{% block content %}
+<div class="grid-container">
+    <div class="grid-x grid-padding-x">
+        {% for post in posts %}
+        <div class="large-offset-3 medium-offset-3 large-6 medium-6 small-12 cell">
+            <h3>{{post.timestamp}} | {{post.author}}</h3>
+            <p>{{ post.caption }}</p>
+            <img src="{{ post.image }}" alt="A Snapshot post">
+            <h4>Comments:</h4>
+            {% for comment in post.comments %}
+            <p><b>{{comment.timestamp}} | {{comment.author}}:</b> {{ comment.comment }}</p>
+            {% endfor %}
+            <b><a href="/comment/?post_id={{post.id}}">Add a Comment...</a></b></br></br>
+        </div>
+        {% endfor %}
+        <div class="large-offset-3 medium-offset-3 large-6 medium-6 small-12 cell">
+            <h3>There doesn't seem to be any more snapshots :(</h3>
+        </div>
+    </div>
+</div>
+{% endblock %}
