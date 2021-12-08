@@ -1,23 +1,69 @@
 {% extends "base.html" %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
+<br/>
 <div class="grid-container">
     <div class="grid-x grid-padding-x">
         {% for post in posts %}
-        <div class="large-offset-3 medium-offset-3 large-6 medium-6 small-12 cell">
-            <h3>{{post.timestamp}} | {{post.author}}</h3>
+        <div class="large-offset-3 medium-offset-2 large-6 medium-8 small-12 cell">
+            <div class="grid-x">
+                <div class="large-2 medium-2 small-2 cell">
+                    <a href="/user/?username={{post.author}}" class="thumbnail"><img width="50em" src="{{post.author_image}}" alt="{{post.author}}"></a>
+                </div>
+                <div class="large-5 medium-5 small-5 cell">
+                    <h3 align="left">{{post.author}}</h3>
+                </div>
+            </div>
             <p>{{ post.caption }}</p>
-            <img src="{{ post.image }}" alt="A Snapshot post">
-            <h4>Comments:</h4>
+            <div class="grid-x">
+                <img src="{{ post.image }}" alt="A Snapshot post">
+                <div class="large-6 medium-6 small-6 cell">
+                    <a href="/likes/?post_id={{post.id}}"><p><b>{{post.likes}} Like{% if post.likes != 1 %}s{% endif %}</b></p></a>
+                </div>
+                <div class="large-6 medium-6 small-6 cell">
+                    <p align="right"><b>{{post.timestamp}}</b></p>
+                </div>
+            </div>
+            <div class="grid-x grid-padding-x">
+                <div class="large-10 medium-10 small-10 cell">
+                    <form action="/make_comment/?post_id={{post.id}}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input class="input-group-field" type="text" name="comment" required="" id="id_comment">
+                            <div class="input-group-button">
+                                <input type="submit" class="button" value="Comment">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="large-1 medium-1 small-1 cell">
+                    {% if not post.liked %}
+                        <form action="/like_post/?post_id={{post.id}}" method="post">
+                            {% csrf_token %}
+                            {{post.like_form}}
+                            <input type="submit" class="button" value="♥" />
+                        </form>
+                    {% else %}
+                        <button type="button" class="button secondary">♥</button>
+                    {% endif %}
+                </div>
+                <!-- TODO: Unlike posts -->
+            </div>
+            <div class="grid-x">
+                <!-- TODO: Foundation Media Object -->
             {% for comment in post.comments %}
-            <p><b>{{comment.timestamp}} | {{comment.author}}:</b> {{ comment.comment }}</p>
+                <div class="large-4 medium-4 small-4 cell">
+                    <a href="/user/?username={{comment.author}}" class="thumbnail"><img width="30em" src="{{comment.author_image}}" alt="{{comment.author}}"></a> <b>{{comment.author}}</b> <i>{{comment.timestamp}}</i>
+                </div>
+                <div class="large-8 medium-8 small-8 cell">
+                    <p>{{comment.comment}}</p>
+                    <br>
+                </div>
             {% endfor %}
-            <b><a href="/comment/?post_id={{post.id}}">Add a Comment...</a></b></br></br>
+            </div>
+            <hr>
         </div>
         {% endfor %}
-        <div class="large-offset-3 medium-offset-3 large-6 medium-6 small-12 cell">
-            <h3>There doesn't seem to be any more snapshots :(</h3>
-        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<br>
+<div class="grid-container">
+    <div class="grid-x grid-padding-x">
+        <div class=" large-2 medium-3 small-4 cell">
+            <img class="thumbnail" width="100em" src="{{ user.image.url }}" alt="{{ user.username }}'s profile picture">
+        </div>
+        <div class="large-10 medium-9 small-8 cell">
+            <div class="grid-y">
+                <div class="large-6 medium-6 small-6 cell">
+                    <div class="grid-x grid-padding-x">
+                        <div class="large-6 medium-6 small-6 cell">
+                            <h1>{{user.username}}</h1>
+                        </div>
+                        <div class="large-6 medium-6 small-6 cell">
+                            {% if request.user.is_authenticated and request.user.username != user.username %}
+                                    {% if not is_following %}
+                                        <form action="/follow/?username={{ user.username }}" method="post">
+                                            {% csrf_token %}
+                                            {{follow_user_form}}
+                                            <input type="submit" class="button expanded" value="Follow" />
+                                        </form>
+                                    {% else %}
+                                        <button type="button" class="button secondary expanded">Following</button>
+                                    <!-- TODO: Unfollow -->
+                                    {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="large-6 medium-6 small-6 cell">
+                    <div class="grid-x grid-padding-x">
+                        <div class="large-3 medium-3 small-3 cell">
+                            <a href="/followers/?username={{ user.username }}"><b><p>{{ follower_count }} Follower{% if follower_count != 1 %}s{% endif %}</p></b></a>
+                        </div>
+                        <div class="large-3 medium-3 small-3 cell">
+                            <a href="/following/?username={{ user.username }}"><b><p>{{ following_count }} Following</p></b></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid-container">
+    <div class="grid-x grid-padding-y grid-padding-x large-up-4 medium-up-3 small-up-2">
+        {% for post in posts %}
+        <div class="large-2 medium-3 small-4 cell">
+            <a href="/post?post_id={{post.id}}"><img src="{{ post.image }}" alt="A Snapshot post"></a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+{% endblock %}

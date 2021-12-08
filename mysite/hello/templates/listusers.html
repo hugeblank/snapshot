@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<br>
+<div class="grid-container">
+    {% if type == "likers" %}
+        <h1>Likes on {{username}}'s post:</h1>
+    {% elif type == "followers" %}
+        <h1>Followers of {{username}}:</h1>
+    {% else %}
+        <h1>Users {{username}} is Following:</h1>
+    {% endif %}
+    <div class="grid-x grid-padding-x">
+        <div class="large-offset-3 medium-offset-2 small-offset-1 large-6 medium-8 small-10 cell">
+            <div class="grid-x grid-padding-y grid-padding-x">
+                {% for user in userlist %}
+                    <div class="large-2 medium-2 small-2 cell">
+                        <a class="thumbnail" href="/user/?username={{user.username}}"><img src="{{ user.profile_icon }}" alt="{{ user.username }}'s profile picture"></a>
+                    </div>
+                    <div class="large-8 medium-8 small-8 cell">
+                        <h3>{{user.username}}</h3>
+                    </div>
+                    <div class="large-2 medium-2 small-2 cell">
+                        <h5>{{user.timestamp}}</h5>
+                    </div>
+                    <br><hr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -6,7 +6,7 @@
   <!-- <div class="large-4 medium-4 small-12 cell"></div> -->
   <div class="large-4 medium-4 small-12 large-offset-4 medium-offset-4 cell">
     <h3 class="text-center">{{ title }}</h3>
-    <form action="/register/" method="post">
+    <form action="/register/" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         {{ form.errors }}
@@ -18,6 +18,8 @@
         {{ form.password1 }}
         {{ form.password2.label_tag }}
         {{ form.password2 }}
+        {{ form.image.label_tag }}
+        {{ form.image }}
         <input type="submit" class="button expanded" value="Create Account" />
     </form>
   </div>

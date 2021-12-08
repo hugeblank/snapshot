@@ -12,11 +12,15 @@
     <body>
         <div class="top-bar">
             <ul class="menu align-left">
-                <li class="menu-text"><a href="/">Snapshot</a></li>
+                <li class="menu-text"><a href="/global">Snapshot</a></li>
+                {% if request.user.is_authenticated %}
+                    <li class="menu-text"><a href="/">My Feed</a></li>
+                {% endif %}
             </ul>
             <ul class="menu align-right">
                 {% if request.user.is_authenticated %}
-                    <li class="menu-text"><a href="/post/">Post</a></li>
+                    <li class="menu-text"><a href="/make_post/">Post</a></li>
+                    <li class="menu-text"><a href="/user/?username={{request.user.username}}">Profile</a></li>
                     <li class="menu-text"><a href="/logout/">Logout</a></li>
                 {% else %}
                     <li class="menu-text"><a href="/register/">Sign Up</a></li>

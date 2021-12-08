@@ -6,12 +6,20 @@ from django.conf import settings
 from . import views
 
 urlpatterns = [
-    path('', views.view_snapshots),
+    path('', views.view_follower_snapshots),
+    path('global/', views.view_global_snapshots),
+    path('user/', views.view_user),
+    path('post/', views.view_post),
+    path('followers/', views.view_user_followers),
+    path('following/', views.view_user_following),
+    path('likes/', views.view_post_likes),
     path('register/', views.register_view),
     path('login/', auth_views.LoginView.as_view()),
     path('logout/', views.logout_view),
-    path('post/', views.make_post),
-    path('comment/', views.make_comment),
+    path('make_post/', views.make_post),
+    path('make_comment/', views.make_comment),
+    path('follow/', views.follow_user),
+    path('like_post/', views.like_post)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,27 +1,44 @@
 from django.db import models
-from django.contrib.auth.models import User as auth_user
+from django.contrib.auth.models import User
 import hashlib
+import datetime
+import io
 
 # Create your models here.
-class SnapshotPostModel(models.Model):
-    caption = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(auth_user, on_delete=models.CASCADE)
+
+class FancyUser(User):
+    def path(instance, filename):
+        return 'images/' + instance.username + '/profile'
+
+    image = models.ImageField(upload_to=path)
+    # timestamp can be found in the date_joined field.
     
+class SnapshotPost(models.Model):
     def path(instance, filename):
         # Assign each file a unique hash per-user
         sha = hashlib.sha256()
+        time = datetime.datetime.now().isoformat()
         file = instance.image.file.open()
         for line in file:
             sha.update(line)
-            print(line)
+        sha.update(time.encode())
         # swap out the file name with a (hopefully unique) hash
         return 'images/' + instance.author.username + '/' + sha.hexdigest()
 
     image = models.ImageField(upload_to=path)
-
-class PostCommentModel(models.Model):
-    comment = models.CharField(max_length=255)
+    caption = models.CharField(max_length=255)
+    author = models.ForeignKey(FancyUser, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(auth_user, on_delete=models.CASCADE)
-    post = models.ForeignKey(SnapshotPostModel, on_delete = models.CASCADE)
+class PostComment(models.Model):
+    post = models.ForeignKey(SnapshotPost, on_delete = models.CASCADE)
+    comment = models.CharField(max_length=255)
+    author = models.ForeignKey(FancyUser, on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+class LikePost(models.Model):
+    post = models.ForeignKey(SnapshotPost, on_delete = models.CASCADE)
+    liker = models.ForeignKey(FancyUser, on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+class FollowUser(models.Model):
+    following_user = models.ForeignKey(FancyUser, related_name="following_user", on_delete = models.CASCADE)
+    followed_user = models.ForeignKey(FancyUser, related_name="followed_user", on_delete = models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
