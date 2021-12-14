@@ -2,13 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 import hashlib
 import datetime
-import io
+import os
 
 # Create your models here.
 
 class FancyUser(User):
     def path(instance, filename):
-        return 'images/' + instance.username + '/profile'
+        return 'images/' + instance.username + '/profile' + os.path.splitext(filename)
 
     image = models.ImageField(upload_to=path)
     # timestamp can be found in the date_joined field.
@@ -23,7 +23,7 @@ class SnapshotPost(models.Model):
             sha.update(line)
         sha.update(time.encode())
         # swap out the file name with a (hopefully unique) hash
-        return 'images/' + instance.author.username + '/' + sha.hexdigest()
+        return 'images/' + instance.author.username + '/' + sha.hexdigest() + os.path.splitext(filename)
 
     image = models.ImageField(upload_to=path)
     caption = models.CharField(max_length=255)

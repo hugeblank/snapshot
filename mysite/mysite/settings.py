@@ -131,5 +131,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media Root for uploaded files
 
-MEDIA_ROOT = "/media/"
+MEDIA_ROOT = "./media/"
 MEDIA_URL = '/media/'

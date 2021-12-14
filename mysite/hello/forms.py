@@ -70,7 +70,11 @@ class FollowUserForm(forms.Form):
         instance = models.FollowUser()
         instance.following_user = following_user
         instance.followed_user = followed_user
-        instance.save()
+        if following_user != followed_user:
+            if not models.FollowUser.objects.exists(following_user=following_user, followed_user=followed_user):
+                instance.save()
+            else:
+                models.LikePost.objects.delete(following_user=following_user, followed_user=followed_user)
         return instance
 
 class LikePostForm(forms.Form):
@@ -78,6 +82,8 @@ class LikePostForm(forms.Form):
         instance = models.LikePost()
         instance.post = models.SnapshotPost.objects.get(id=post_id)
         instance.liker = models.FancyUser.objects.get(username=liker)
-        # Does this need validation?
-        instance.save()
+        if not models.LikePost.objects.exists(liker=liker, post=post_id):
+            instance.save()
+        else:
+            models.LikePost.objects.delete(post_id=post_id, liker=liker)
         return instance

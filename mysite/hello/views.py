@@ -19,7 +19,7 @@ def parse_posts(request, postlist):
         json_comments = []
         liked = False
         if (request.user.is_authenticated):
-            liked = models.LikePost.objects.filter(post_id=post.id, liker_id=request.user.id).count() > 1
+            liked = models.LikePost.objects.filter(post_id=post.id, liker_id=request.user.id).count() >= 1
         for comment in comments:
             json_comments += [{
                 "author": comment.author.username,

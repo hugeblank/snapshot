@@ -3,9 +3,13 @@ version: '3'
 
 services:
   web:
+    restart: always
     build: .
     volumes:
-       - .:/code
+      - .:/code
+    expose:
+      - 8000
     ports:
-       - 8000:8000
-    command: python /code/mysite/manage.py runserver 0.0.0.0:8000
+      - 8000:8000
+    working_dir: /code/mysite
+    command: python manage.py runserver 0.0.0.0:8000
