@@ -71,19 +71,21 @@ class FollowUserForm(forms.Form):
         instance.following_user = following_user
         instance.followed_user = followed_user
         if following_user != followed_user:
-            if not models.FollowUser.objects.exists(following_user=following_user, followed_user=followed_user):
+            follow_filter = models.FollowUser.objects.filter(following_user=following_user, followed_user=followed_user)
+            if follow_filter.count() == 0:
                 instance.save()
             else:
-                models.LikePost.objects.delete(following_user=following_user, followed_user=followed_user)
+                follow_filter.delete()
         return instance
 
 class LikePostForm(forms.Form):
     def save(self, request, post_id, liker):
         instance = models.LikePost()
         instance.post = models.SnapshotPost.objects.get(id=post_id)
-        instance.liker = models.FancyUser.objects.get(username=liker)
-        if not models.LikePost.objects.exists(liker=liker, post=post_id):
+        instance.liker = liker
+        like_filter = models.LikePost.objects.filter(post_id=post_id, liker=liker)
+        if like_filter.count() == 0:
             instance.save()
         else:
-            models.LikePost.objects.delete(post_id=post_id, liker=liker)
+            like_filter.delete()
         return instance

@@ -23,7 +23,7 @@ class SnapshotPost(models.Model):
             sha.update(line)
         sha.update(time.encode())
         # swap out the file name with a (hopefully unique) hash
-        return 'images/' + instance.author.username + '/' + sha.hexdigest() + os.path.splitext(filename)
+        return 'images/' + instance.author.username + '/' + sha.hexdigest() + os.path.splitext(filename)[1]
 
     image = models.ImageField(upload_to=path)
     caption = models.CharField(max_length=255)
