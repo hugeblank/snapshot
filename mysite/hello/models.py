@@ -8,7 +8,7 @@ import os
 
 class FancyUser(User):
     def path(instance, filename):
-        return 'images/' + instance.username + '/profile' + os.path.splitext(filename)
+        return 'images/' + instance.username + '/profile' + os.path.splitext(filename)[1]
 
     image = models.ImageField(upload_to=path)
     # timestamp can be found in the date_joined field.

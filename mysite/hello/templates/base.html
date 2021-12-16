@@ -19,7 +19,8 @@
             </ul>
             <ul class="menu align-right">
                 {% if request.user.is_authenticated %}
-                    <li class="menu-text"><a href="/make_post/">Post</a></li>
+                <li class="menu-text"><a href="/chat/">Chat</a></li>
+                <li class="menu-text"><a href="/make_post/">Post</a></li>
                     <li class="menu-text"><a href="/user/?username={{request.user.username}}">Profile</a></li>
                     <li class="menu-text"><a href="/logout/">Logout</a></li>
                 {% else %}

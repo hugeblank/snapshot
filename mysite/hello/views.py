@@ -144,6 +144,19 @@ def view_follower_snapshots(request):
         return redirect("/global")
 
 @login_required(login_url="/login")
+def chat_view(request):
+    return render(request, 'chat/index.html')
+
+@login_required(login_url="/login")
+def view_room(request, room_name):
+    if (request.user.is_authenticated):
+        return render(request, 'chat/room.html', {
+            'room_name': room_name
+        })
+    else:
+        return redirect('/')
+
+@login_required(login_url="/login")
 def make_post(request):
     if request.method == 'POST':
         form = forms.PostSnapshotForm(request.POST, request.FILES)

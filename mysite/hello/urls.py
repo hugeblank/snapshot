@@ -19,7 +19,9 @@ urlpatterns = [
     path('make_post/', views.make_post),
     path('make_comment/', views.make_comment),
     path('follow/', views.follow_user),
-    path('like_post/', views.like_post)
+    path('like_post/', views.like_post),
+    path('chat/', views.chat_view),
+    path('chat/<str:room_name>/', views.view_room, name='room'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
