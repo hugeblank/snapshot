@@ -158,12 +158,25 @@ def make_post(request):
     })
 
 @login_required(login_url="/login")
+def make_dm(request):
+    if request.method == 'POST':
+        form = forms.PostSnapshotForm(request.POST, request.FILES)
+        if form.is_valid() and request.user.is_authenticated:
+            form.save(request)
+            return redirect('/')
+    else:
+        form = forms.MessageRoomForm()
+    return render(request, 'post.html', context={
+        "title": "Create Snapshot",
+        "form": form
+    })
+
+@login_required(login_url="/login")
 def make_comment(request):
-    post_id = request.GET.get('post_id')
     if request.method == 'POST':
         form = forms.PostCommentForm(request.POST)
         if form.is_valid() and request.user.is_authenticated:
-            form.save(request, post_id)
+            form.save(request)
     else:
         form = forms.PostCommentForm()
     return redirect('/')
@@ -196,17 +209,3 @@ def like_post(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
-
-def register_view(request):
-    if request.method == 'POST':
-        form = forms.RegistrationForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            form.save(request)
-            return redirect('/login/')
-    else:
-        form = forms.RegistrationForm()
-    return render(request, 'registration/register.html', context={
-        "title": "Create Snapshot Account",
-        "form": form
-    })

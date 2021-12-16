@@ -19,7 +19,8 @@ urlpatterns = [
     path('make_post/', views.make_post),
     path('make_comment/', views.make_comment),
     path('follow/', views.follow_user),
-    path('like_post/', views.like_post)
+    path('like_post/', views.like_post),
+    path('make_dm/', views.make_dm)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

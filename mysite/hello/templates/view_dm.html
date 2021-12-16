@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<br>
+<div class="grid-container">
+    <div class="grid-x grid-padding-x">
+        <div class="large-offset-3 medium-offset-2 small-offset-1 large-6 medium-8 small-10 cell">
+            <div id="message-container" class="grid-x grid-padding-y grid-padding-x">
+                {% for message in messagelist %}
+                <div class="large-2 medium-2 small-2 cell">
+                    <a href="/user/?username={{message.author}}" class="thumbnail"><img width="30em"
+                            src="{{message.author_image}}" alt="{{message.author}}s profile picture"></a>
+                    <b>{{message.author}}</b> <i>{{message.timestamp}}</i>
+                </div>
+                <div class="large-8 medium-8 small-8 cell">
+                    <h3>{{message.sender}}</h3>
+                </div>
+                <div class="large-2 medium-2 small-2 cell">
+                    <h5>{{message.timestamp}}</h5>
+                </div>
+                <br>
+                <hr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        function create(htmlStr) { 
+            // Derived from https://stackoverflow.com/questions/814564/inserting-html-elements-with-javascript
+            var frag = document.createDocumentFragment(),
+                temp = document.createElement('div');
+            temp.innerHTML = htmlStr;
+            while (temp.firstChild) {
+                frag.appendChild(temp.firstChild);
+            }
+            return frag;
+        }
+
+        const key = JSON.parse(document.getElementById('key').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/dm/'
+            + key
+            + '/'
+        );
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            if (data.type == 'direct_message') {
+                document.querySelector('#message-container').append(create(data));
+            }
+        };
+
+        chatSocket.onclose = function (e) {
+            console.error('Unexpected Socket close - please refresh the page');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function (e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function (e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+</div>
+
+{% endblock %}
