@@ -6,7 +6,29 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'assets/foundation.min.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/foundation-icons/foundation-icons.css' %}" />
         <title>{{title}}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}">
+        <script src="{% static 'assets/moment.js' %}"></script>
+        <script type="text/javascript">
+            // Parses UTC timestamps from django to localized timestamp, then
+            // depending on how much time has elapsed since the timestamp converts
+            // it to a relative duration, or date/time. Depends on moment.js (https://momentjs.com)
+            // Derived partially from: https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time
+            function timeparse(stamp, id) {
+                const local = moment.utc(stamp, 'MM-DD-YYYY hh:mm').local();
+                var output;
+                if (local > moment().subtract(2, 'hours')) {
+                    output = local.fromNow();
+                } else if (local > moment().subtract(2, 'days')) {
+                    output = local.calendar();
+                } else {
+                    output = local.format('MM-DD-YYYY hh:mm A');
+                }
+                document.getElementById(id).innerHTML = output;
+            }
+        </script>
+        {% autoescape off %}{% block meta %}{% endblock %}{% endautoescape %}
     </head>
 
     <body>
@@ -14,23 +36,23 @@
             <ul class="menu align-left">
                 <li class="menu-text"><a href="/global">Snapshot</a></li>
             </ul>
-            <ul class="dropdown menu align-right" data-dropdown-menu>
                 {% if request.user.is_authenticated %}
-                    <li>
-                        <img class="thumbnail" src="{{profile_icon}}" width="42" alt="{{request.user.username}}'s Avatar">
-                        <ul class="menu">
-                            <li class="menu-text"><a href="/">My Feed</a></li>
-                            <li class="menu-text"><a href="/user/{{request.user.username}}">Profile</a></li>
-                            <li class="menu-text"><a href="/make_post">Post</a></li>
-                            <li class="menu-text"><a href="/chat/">Chat</a></li>
-                            <li class="menu-text"><a class="alert button expanded" href="/logout/">Logout</a></li>
+                    <a class="thumbnail" data-toggle="profile-dropdown"><img src="{{profile_icon}}" width="45" alt="{{request.user.username}}'s Avatar"></a>
+                    <div class="dropdown-pane bottom" id="profile-dropdown" data-dropdown data-alignments="right">
+                        <ul class="vertical menu align-center">
+                            <li class = ><a class="button expanded secondary" href="/"><b><i class="fi-page-multiple"> </i>My Feed</b></a></li>
+                            <li class = ><a class="button expanded secondary" href="/user/{{request.user.username}}"><b><i class="fi-torso"> </i>Profile</b></a></li>
+                            <li class = ><a class="button expanded secondary" href="/make_post"><b><i class="fi-camera"> </i>Post</b></a></li>
+                            <li class = ><a class="button expanded secondary" href="/chat/"><b><i class="fi-comments"> </i>Chat</b></a></li>
+                            <li class = ><a class="alert button expanded" href="/logout/"><b><i class="fi-lock"> </i>Logout</b></a></li>
                         </ul>
-                    </li>
+                    </div>
                 {% else %}
-                    <li class="menu-text"><a href="/register/">Sign Up</a></li>
-                    <li class="menu-text"><a href="/login/">Login</a></li>
+                    <ul class="menu align-right">
+                        <li class="menu-text"><a href="/register/">Sign Up</a></li>
+                        <li class="menu-text"><a href="/login/">Login</a></li>
+                    </ul>
                 {% endif %}
-            </ul>
         </div>
         {% block content %}
         {% endblock %}

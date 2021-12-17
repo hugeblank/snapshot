@@ -11,15 +11,52 @@ from . import forms
 def sort_chrono(post):
     return post.timestamp.isoformat()
 
+def generate_generic_unfurl():
+    # Cursed
+    return """
+    <meta property="og:type" content="website" />\n
+    <meta property="og:title" content="Snapshot" />\n
+    <meta property="og:description" content="Check out what's going on in the community!" />\n
+    <meta property="og:image" content="https://snapshot.hugeblank.me/media/favicon.png" />\n
+
+    <meta name="twitter:card" content="app" />\n
+    <meta name="twitter:domain" content="snapshot.hugeblank.me" />\n
+    <meta name="twitter:title" content="Snapshot" />\n
+    <meta name="twitter:description" content="Check out what's going on in the community!" />\n
+    <meta name="twitter:image" content="https://snapshot.hugeblank.me/media/favicon.png" />\n
+    <meta name="twitter:url" content="https://snapshot.hugeblank.me/" />\n
+    """
+
+def generate_post_unfurl(post):
+    # Cursed
+    return """
+    <meta property="og:type" content="website" />\n
+    <meta property="og:title" content="%s's Post | Snapshot" />\n
+    <meta property="og:description" content="%s" />\n
+    <meta property="og:image" content="%s" />\n
+
+    <meta name="twitter:card" content="summary_large_image" />\n
+    <meta name="twitter:domain" content="snapshot.hugeblank.me" />\n
+    <meta name="twitter:site" content="@hugeblank">
+    <meta name="twitter:title" content="%s's Post | Snapshot" />\n
+    <meta name="twitter:description" content="%s" />\n
+    <meta name="twitter:image" content="https://snapshot.hugeblank.me%s" />\n
+    <meta name="twitter:url" content="https://snapshot.hugeblank.me/post%s" />\n
+    <meta name="twitter:label1" content="%s Likes" />\n
+    <meta name="twitter:label2" content="%s" />\n
+    """%(post['author'], post['caption'], post['image'], post['author'], post['caption'], post['image'], post['id'], post['likes'], post['timestamp'])
+
 def get_context(request, title):
     if request.user.is_authenticated:
         return {
             "profile_icon": models.FancyUser.objects.get(username=request.user.username).image.url,
             "title": title,
+            "meta": generate_generic_unfurl(),
         }
     else:
         return {
             "title": title,
+            "meta": generate_generic_unfurl(),
         }
 
 def parse_posts(request, postlist):
@@ -36,6 +73,7 @@ def parse_posts(request, postlist):
                 "author": comment.author.username,
                 "author_image": comment.author.image.url,
                 "comment": comment.comment,
+                "id": comment.id,
                 "timestamp": comment.timestamp.strftime("%m-%d-%Y %H:%M")
             }]
         
@@ -59,7 +97,11 @@ def view_global_snapshots(request):
     return render(request, 'index.html', context)
 
 def view_post(request, post_id):
-    context = get_context(request, "Post | Snapshot")  | {"posts": parse_posts(request, [models.SnapshotPost.objects.get(id=post_id)])}
+    post = parse_posts(request, [models.SnapshotPost.objects.get(id=post_id)])
+    context = get_context(request, "Post | Snapshot")  | {
+        "posts": post,
+        "meta": generate_post_unfurl(post[0])
+    }
     return render(request, 'index.html', context)
 
 def view_user(request, username):
@@ -164,8 +206,8 @@ def make_post(request):
     if request.method == 'POST':
         form = forms.PostSnapshotForm(request.POST, request.FILES)
         if form.is_valid() and request.user.is_authenticated:
-            form.save(request)
-            return redirect('/')
+            instance = form.save(request)
+            return redirect('/post/' + str(instance.id))
     else:
         form = forms.PostSnapshotForm()
     context = get_context(request, "Create Post | Snapshot") | {"form": form}
@@ -179,7 +221,7 @@ def make_comment(request, post_id):
             form.save(request, post_id)
     else:
         form = forms.PostCommentForm()
-    return redirect('/')
+    return redirect('/post/' + str(post_id))
 
 @login_required(login_url="/login")
 def follow_user(request, username):
@@ -191,7 +233,7 @@ def follow_user(request, username):
             form.save(request, requser, user)
     else:
         form = forms.FollowUserForm()
-    return redirect('/user' + username)
+    return redirect('/user/' + username)
 
 @login_required(login_url="/login")
 def like_post(request, post_id):
@@ -202,11 +244,11 @@ def like_post(request, post_id):
             form.save(request, post_id, requser)
     else:
         form = forms.LikePostForm()
-    return redirect('/')
+    return redirect('/post/' + str(post_id))
 
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    return redirect('/global/')
 
 def register_view(request):
     if request.method == 'POST':

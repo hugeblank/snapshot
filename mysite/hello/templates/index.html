@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block meta %}{{meta}}{% endblock %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
 <br/>
@@ -21,7 +22,8 @@
                     <a href="/likes/{{post.id}}"><p><b>{{post.likes}} Like{% if post.likes != 1 %}s{% endif %}</b></p></a>
                 </div>
                 <div class="large-6 medium-6 small-6 cell">
-                    <p align="right"><b>{{post.timestamp}}</b></p>
+                    <p align="right"><b id="timestamp-post-{{post.id}}"></b></p>
+                    <script type="text/javascript"> timeparse('{{post.timestamp}}', "timestamp-post-{{post.id}}"); </script>
                 </div>
             </div>
             <div class="grid-x grid-padding-x">
@@ -53,7 +55,8 @@
                 <!-- TODO: Foundation Media Object -->
             {% for comment in post.comments %}
                 <div class="large-4 medium-4 small-4 cell">
-                    <a href="/user/{{comment.author}}" class="thumbnail"><img width="30em" src="{{comment.author_image}}" alt="{{comment.author}}"></a> <b>{{comment.author}}</b> <i>{{comment.timestamp}}</i>
+                    <a href="/user/{{comment.author}}" class="thumbnail"><img width="30em" src="{{comment.author_image}}" alt="{{comment.author}}"></a> <b>{{comment.author}}</b><br> <i id="timestamp-comment-{{comment.id}}"></i>
+                    <script type="text/javascript"> timeparse('{{comment.timestamp}}', "timestamp-comment-{{comment.id}}"); </script>
                 </div>
                 <div class="large-8 medium-8 small-8 cell">
                     <p>{{comment.comment}}</p>

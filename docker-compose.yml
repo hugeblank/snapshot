@@ -8,8 +8,8 @@ services:
       - .:/code
     expose:
       - 8000
-    ports: # Le forbidden backdoor
-      - "8000:8000"
+#    ports: # Le forbidden backdoor
+#      - "8000:8000"
     links:
       - redis:redis
     working_dir: /code/mysite

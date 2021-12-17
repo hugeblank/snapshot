@@ -1,21 +1,3 @@
-localhost {
-    root * /srv/
-    file_server *
-    @notStatic {
-        not path /static/*
-        not path /media/*
-    }
-    reverse_proxy @notStatic web:8000
-    log {
-        output file /var/log/access.log {
-            roll_size 1gb
-            roll_keep 5
-            roll_keep_for 720h
-        }
-    }
-}
-
-/*
 snapshot.hugeblank.me {
     root * /srv/
     file_server *
@@ -32,4 +14,3 @@ snapshot.hugeblank.me {
         }
     }
 }
-*/
