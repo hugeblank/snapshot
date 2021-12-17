@@ -13,16 +13,19 @@
         <div class="top-bar">
             <ul class="menu align-left">
                 <li class="menu-text"><a href="/global">Snapshot</a></li>
-                {% if request.user.is_authenticated %}
-                    <li class="menu-text"><a href="/">My Feed</a></li>
-                {% endif %}
             </ul>
-            <ul class="menu align-right">
+            <ul class="dropdown menu align-right" data-dropdown-menu>
                 {% if request.user.is_authenticated %}
-                <li class="menu-text"><a href="/chat/">Chat</a></li>
-                <li class="menu-text"><a href="/make_post/">Post</a></li>
-                    <li class="menu-text"><a href="/user/?username={{request.user.username}}">Profile</a></li>
-                    <li class="menu-text"><a href="/logout/">Logout</a></li>
+                    <li>
+                        <img class="thumbnail" src="{{profile_icon}}" width="42" alt="{{request.user.username}}'s Avatar">
+                        <ul class="menu">
+                            <li class="menu-text"><a href="/">My Feed</a></li>
+                            <li class="menu-text"><a href="/user/{{request.user.username}}">Profile</a></li>
+                            <li class="menu-text"><a href="/make_post">Post</a></li>
+                            <li class="menu-text"><a href="/chat/">Chat</a></li>
+                            <li class="menu-text"><a class="alert button expanded" href="/logout/">Logout</a></li>
+                        </ul>
+                    </li>
                 {% else %}
                     <li class="menu-text"><a href="/register/">Sign Up</a></li>
                     <li class="menu-text"><a href="/login/">Login</a></li>

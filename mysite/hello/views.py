@@ -11,6 +11,17 @@ from . import forms
 def sort_chrono(post):
     return post.timestamp.isoformat()
 
+def get_context(request, title):
+    if request.user.is_authenticated:
+        return {
+            "profile_icon": models.FancyUser.objects.get(username=request.user.username).image.url,
+            "title": title,
+        }
+    else:
+        return {
+            "title": title,
+        }
+
 def parse_posts(request, postlist):
     postlist.sort(reverse=True, key=sort_chrono)
     json_posts = []
@@ -44,38 +55,32 @@ def parse_posts(request, postlist):
     return json_posts
 
 def view_global_snapshots(request):
-    return render(request, 'index.html', context={
-        "title": "Global Posts | Snapshot",
-        "posts": parse_posts(request, list(models.SnapshotPost.objects.all()))
-    })
+    context = get_context(request, "Global Posts | Snapshot") | {"posts": parse_posts(request, list(models.SnapshotPost.objects.all()))}
+    return render(request, 'index.html', context)
 
-def view_post(request):
-    post_id = request.GET.get('post_id')
-    return render(request, 'index.html', context={
-        "title": "Post | Snapshot",
-        "posts": parse_posts(request, [models.SnapshotPost.objects.get(id=post_id)])
-    })
+def view_post(request, post_id):
+    context = get_context(request, "Post | Snapshot")  | {"posts": parse_posts(request, [models.SnapshotPost.objects.get(id=post_id)])}
+    return render(request, 'index.html', context)
 
-def view_user(request):
-    username = request.GET.get('username')
+def view_user(request, username):
     user = models.FancyUser.objects.get(username=username)
     is_following = False
     if (request.user.is_authenticated):
         requser = models.FancyUser.objects.get(username=request.user.username)
         is_following = models.FollowUser.objects.filter(followed_user=user, following_user=requser).count() == 1
 
-    return render(request, 'user.html', context= {
-        "title": username+" | Snapshot", 
+    context = get_context(request, username+" | Snapshot")
+    context = context | {
         "user": user,
         "follow_user_form": forms.FollowUserForm(),
         "follower_count": models.FollowUser.objects.filter(followed_user=user).count(),
         "following_count": models.FollowUser.objects.filter(following_user=user).count(),
         "is_following": is_following,
         "posts": parse_posts(request, list(models.SnapshotPost.objects.filter(author=user)))
-    })
+    }
+    return render(request, 'user.html', context)
 
-def view_user_followers(request):
-    username = request.GET.get('username')
+def view_user_followers(request, username):
     follower_list = models.FollowUser.objects.filter(followed_user=models.FancyUser.objects.get(username=username))
     users = []
     for followdata in follower_list:
@@ -84,15 +89,15 @@ def view_user_followers(request):
             'profile_icon': followdata.following_user.image.url,
             'timestamp': followdata.timestamp.strftime("%m-%d-%Y %H:%M"),
         })
-    return render(request, 'listusers.html', {
-        "title": username+"'s Followers | Snapshot", 
+    context = get_context(request, username+"'s Followers | Snapshot")
+    context = context | {
         'username': username,
         'type': 'followers',
         'userlist': users
-    })
+    }
+    return render(request, 'listusers.html', context)
 
-def view_user_following(request):
-    username = request.GET.get('username')
+def view_user_following(request, username):
     following_list = models.FollowUser.objects.filter(following_user=models.FancyUser.objects.get(username=username))
     users = []
     for followdata in following_list:
@@ -101,15 +106,16 @@ def view_user_following(request):
             'profile_icon': followdata.followed_user.image.url,
             'timestamp': followdata.timestamp.strftime("%m-%d-%Y %H:%M"),
         })
-    return render(request, 'listusers.html', {
-        "title": "Users "+username+"'s Following | Snapshot", 
+    context = get_context(request, "Users "+username+"'s Following | Snapshot")
+    context = context | {
         'username': username,
         'type': 'following',
         'userlist': users
-    })
+    }
+    return render(request, 'listusers.html', context)
 
-def view_post_likes(request):
-    post = models.SnapshotPost.objects.get(id=request.GET.get('post_id'))
+def view_post_likes(request, post_id):
+    post = models.SnapshotPost.objects.get(id=post_id)
     likes = models.LikePost.objects.filter(post=post)
     users = []
     for likedata in likes:
@@ -118,13 +124,13 @@ def view_post_likes(request):
             'profile_icon': likedata.liker.image.url,
             'timestamp': likedata.timestamp.strftime("%m-%d-%Y %H:%M"),
         })
-    
-    return render(request, 'listusers.html', {
-        "title": "Likes | Snapshot", 
+    context = get_context(request, "Likes | Snapshot")
+    context = context | {
         'username': post.author.username,
         'type': 'likers',
         'userlist': users
-    })
+    }
+    return render(request, 'listusers.html', context)
 
 def view_follower_snapshots(request):
     if request.user.is_authenticated:
@@ -135,24 +141,21 @@ def view_follower_snapshots(request):
             fuser = models.FancyUser.objects.get(username=user.followed_user.username)
             postlist += models.SnapshotPost.objects.filter(author=fuser)
         postlist.sort(key=sort_chrono)
-
-        return render(request, 'index.html', context={
-            "title": "My Feed | Snapshot",
-            "posts": parse_posts(request, postlist)
-            })
+        context = get_context(request, "My Feed | Snapshot") | {"posts": parse_posts(request, postlist)}
+        return render(request, 'index.html', context)
     else:
         return redirect("/global")
 
 @login_required(login_url="/login")
 def chat_view(request):
-    return render(request, 'chat/index.html')
+    context = get_context(request, "Join Chat Room | Snapshot")
+    return render(request, 'chat/index.html', context)
 
 @login_required(login_url="/login")
 def view_room(request, room_name):
     if (request.user.is_authenticated):
-        return render(request, 'chat/room.html', {
-            'room_name': room_name
-        })
+        context = get_context(request, "Chat | Snapshot") | {"room_name": room_name}
+        return render(request, 'chat/room.html', context)
     else:
         return redirect('/')
 
@@ -165,14 +168,11 @@ def make_post(request):
             return redirect('/')
     else:
         form = forms.PostSnapshotForm()
-    return render(request, 'post.html', context={
-        "title": "Create Snapshot",
-        "form": form
-    })
+    context = get_context(request, "Create Post | Snapshot") | {"form": form}
+    return render(request, 'post.html', context)
 
 @login_required(login_url="/login")
-def make_comment(request):
-    post_id = request.GET.get('post_id')
+def make_comment(request, post_id):
     if request.method == 'POST':
         form = forms.PostCommentForm(request.POST)
         if form.is_valid() and request.user.is_authenticated:
@@ -182,8 +182,7 @@ def make_comment(request):
     return redirect('/')
 
 @login_required(login_url="/login")
-def follow_user(request):
-    username = request.GET.get('username')
+def follow_user(request, username):
     user = models.FancyUser.objects.get(username=username)
     requser = models.FancyUser.objects.get(username=request.user.username)
     if request.method == 'POST':
@@ -192,11 +191,10 @@ def follow_user(request):
             form.save(request, requser, user)
     else:
         form = forms.FollowUserForm()
-    return redirect('/user?username=' + username)
+    return redirect('/user' + username)
 
 @login_required(login_url="/login")
-def like_post(request):
-    post_id = request.GET.get('post_id')
+def like_post(request, post_id):
     requser = models.FancyUser.objects.get(username=request.user.username)
     if request.method == 'POST':
         form = forms.LikePostForm(request.POST)

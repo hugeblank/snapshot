@@ -8,11 +8,10 @@ services:
       - .:/code
     expose:
       - 8000
-#    ports: # Le forbidden backdoor
-#      - "8000:8000"
+    ports: # Le forbidden backdoor
+      - "8000:8000"
     links:
       - redis:redis
-    user: 1001:1002
     working_dir: /code/mysite
     command: python manage.py runserver 0.0.0.0:8000
 
@@ -23,7 +22,6 @@ services:
 
   caddy:
       image: caddy:latest
-      restart: unless-stopped
       depends_on:
         - web
       links:

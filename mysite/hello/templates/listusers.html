@@ -15,7 +15,7 @@
             <div class="grid-x grid-padding-y grid-padding-x">
                 {% for user in userlist %}
                     <div class="large-2 medium-2 small-2 cell">
-                        <a class="thumbnail" href="/user/?username={{user.username}}"><img src="{{ user.profile_icon }}" alt="{{ user.username }}'s profile picture"></a>
+                        <a class="thumbnail" href="/user/{{user.username}}"><img src="{{ user.profile_icon }}" alt="{{ user.username }}'s profile picture"></a>
                     </div>
                     <div class="large-8 medium-8 small-8 cell">
                         <h3>{{user.username}}</h3>
