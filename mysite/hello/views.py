@@ -1,12 +1,26 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from html_sanitizer import Sanitizer
 
 
 from . import models
 from . import forms
 
 # Create your views here.
+sanitizer = Sanitizer({
+    'tags': {"meta"},
+    'attributes': {
+        "meta": {
+            "property",
+            "name",
+            "content",
+        }
+    },
+    'empty': {},
+    'separate': {}
+
+})
 
 def sort_chrono(post):
     return post.timestamp.isoformat()
@@ -28,6 +42,7 @@ def generate_generic_unfurl():
     """
 
 def generate_post_unfurl(post):
+    caption = sanitizer.sanitize(post['caption'])
     # Cursed
     return """
     <meta property="og:type" content="website" />\n
@@ -44,7 +59,7 @@ def generate_post_unfurl(post):
     <meta name="twitter:url" content="https://snapshot.hugeblank.me/post%s" />\n
     <meta name="twitter:label1" content="%s Likes" />\n
     <meta name="twitter:label2" content="%s" />\n
-    """%(post['author'], post['caption'], post['image'], post['author'], post['caption'], post['image'], post['id'], post['likes'], post['timestamp'])
+    """%(post['author'], caption, post['image'], post['author'], caption, post['image'], post['id'], post['likes'], post['timestamp'])
 
 def get_context(request, title):
     if request.user.is_authenticated:

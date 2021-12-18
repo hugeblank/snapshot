@@ -15,7 +15,7 @@
                     <h3 align="left">{{post.author}}</h3>
                 </div>
             </div>
-            <p>{{ post.caption }}</p>
+            <p class="force-wrap">{{ post.caption }}</p>
             <img src="{{ post.image }}" alt="A Snapshot post">
             <div class="grid-x">
                 <div class="large-6 medium-6 small-6 cell">
@@ -59,7 +59,7 @@
                     <script type="text/javascript"> timeparse('{{comment.timestamp}}', "timestamp-comment-{{comment.id}}"); </script>
                 </div>
                 <div class="large-8 medium-8 small-8 cell">
-                    <p>{{comment.comment}}</p>
+                    <p class="force-wrap">{{comment.comment}}</p>
                     <br>
                 </div>
             {% endfor %}

@@ -1,0 +1,13 @@
+/* Force wrapping derived from https://stackoverflow.com/questions/3058866/how-to-force-a-line-break-in-a-long-word-in-a-div/18706058#18706058 */
+p.force-wrap {
+    -ms-word-break: break-all;
+    word-break: break-all;
+
+ /* Non standard for webkit */
+     word-break: break-word;
+
+    -webkit-hyphens: auto;
+       -moz-hyphens: auto;
+        -ms-hyphens: auto;
+            hyphens: auto;
+}
