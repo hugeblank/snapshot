@@ -14,9 +14,14 @@
 <meta name="twitter:title" content="{{user.username}} | Snapshot">
 <meta name="twitter:description" content="View {{user.username}}'s profile" />
 <meta name="twitter:image" content="{{user.image.url}}" />
-<meta name="twitter:url" content="https://snapshot.hugeblank.me/user/{{post.id}}" />
+<meta name="twitter:url" content="/user/{{user.username}}" />
 <meta name="twitter:label1" content="Followers: {{user.follower_count}}" />
 <meta name="twitter:label2" content="Following: {{user.following_count}}" />
+
+<!-- iOS Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<link rel="apple-touch-icon" href="{{user.image.url}}">
+
 {% endblock %}
 
 {% block content %}

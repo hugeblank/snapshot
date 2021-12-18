@@ -7,20 +7,14 @@ from html_sanitizer import Sanitizer
 from . import models
 from . import forms
 
-# Create your views here.
+# Format specific user generated content
 sanitizer = Sanitizer({
-    'tags': {"meta"},
-    'attributes': {
-        "meta": {
-            "property",
-            "name",
-            "content",
-        }
-    },
+    'tags': {""},
+    'attributes': {},
     'empty': {},
     'separate': {}
-
 })
+# Create your views here.
 
 def sort_chrono(post):
     return post.timestamp.isoformat()
@@ -28,37 +22,48 @@ def sort_chrono(post):
 def generate_generic_unfurl():
     # Cursed
     return """
+    <!-- Facebook OpenGraph Tags-->
     <meta property="og:type" content="website" />\n
     <meta property="og:title" content="Snapshot" />\n
     <meta property="og:description" content="Check out what's going on in the community!" />\n
-    <meta property="og:image" content="https://snapshot.hugeblank.me/media/favicon.png" />\n
+    <meta property="og:image" content="/media/favicon.png" />\n
 
+    <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="app" />\n
     <meta name="twitter:domain" content="snapshot.hugeblank.me" />\n
     <meta name="twitter:title" content="Snapshot" />\n
     <meta name="twitter:description" content="Check out what's going on in the community!" />\n
-    <meta name="twitter:image" content="https://snapshot.hugeblank.me/media/favicon.png" />\n
-    <meta name="twitter:url" content="https://snapshot.hugeblank.me/" />\n
+    <meta name="twitter:image" content="/media/favicon.png" />\n
+
+    <!-- Apple Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/media/favicon.png">
     """
 
 def generate_post_unfurl(post):
     caption = sanitizer.sanitize(post['caption'])
     # Cursed
     return """
+    <!-- Facebook OpenGraph Tags-->
     <meta property="og:type" content="website" />\n
     <meta property="og:title" content="%s's Post | Snapshot" />\n
     <meta property="og:description" content="%s" />\n
     <meta property="og:image" content="%s" />\n
 
+    <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />\n
     <meta name="twitter:domain" content="snapshot.hugeblank.me" />\n
     <meta name="twitter:site" content="@hugeblank">
     <meta name="twitter:title" content="%s's Post | Snapshot" />\n
     <meta name="twitter:description" content="%s" />\n
-    <meta name="twitter:image" content="https://snapshot.hugeblank.me%s" />\n
-    <meta name="twitter:url" content="https://snapshot.hugeblank.me/post%s" />\n
+    <meta name="twitter:image" content="%s" />\n
+    <meta name="twitter:url" content="/post%s" />\n
     <meta name="twitter:label1" content="%s Likes" />\n
     <meta name="twitter:label2" content="%s" />\n
+
+    <!-- Apple Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/media/favicon.png">
     """%(post['author'], caption, post['image'], post['author'], caption, post['image'], post['id'], post['likes'], post['timestamp'])
 
 def get_context(request, title):

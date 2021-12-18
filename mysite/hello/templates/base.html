@@ -21,10 +21,10 @@
                 var output;
                 if (local > moment().subtract(2, 'hours')) {
                     output = local.fromNow();
-                } else if (local > moment().subtract(2, 'days')) {
+                } else if (local > moment().subtract(1, 'days')) {
                     output = local.calendar();
                 } else {
-                    output = local.format('MM-DD-YYYY hh:mm A');
+                    output = local.format('MM-DD-YYYY at hh:mm A');
                 }
                 document.getElementById(id).innerHTML = output;
             }
