@@ -24,7 +24,7 @@
                 } else if (local > moment().subtract(1, 'days')) {
                     output = local.calendar();
                 } else {
-                    output = local.format('MM-DD-YYYY at hh:mm A');
+                    output = local.format('MM-DD-YYYY') + ' at ' + local.format('hh:mm A');
                 }
                 document.getElementById(id).innerHTML = output;
             }
